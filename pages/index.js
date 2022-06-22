@@ -50,16 +50,19 @@ export default function Home() {
       .catch(function (error) {
         console.log(error);
       });
+    
   }
 
-  console.log(div);
+  
+ 
+
 
   return (
     <div className="h-screen flex-col  md:mx-auto items-center flex justify-center bg-blue-100 ">
-      <h1 className="font-medium text-center  leading-tight text-5xl mt-0 mb-2 text-blue-600">
+      <h1 className="font-medium text-center  md:mx-auto  leading-tight text-5xl mt-0 mb-2 text-blue-600">
         Buscador de jugadores
       </h1>
-      <div className=" py-6  flex flex-row">
+      <div className=" py-6  md:mx-auto  flex flex-row">
         <input
           type="text"
           className="
@@ -87,18 +90,31 @@ export default function Home() {
           type="button"
           data-mdb-ripple="true"
           data-mdb-ripple-color="light"
-          className="inline-block px-6 py-2.5 bg-blue-600 rounded-r-lg text-white font-medium text-xs leading-tight uppercase  shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+          className="  md:mx-auto inline-block px-6 py-2.5 bg-blue-600 rounded-r-lg text-white font-medium text-xs leading-tight uppercase  shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
           onClick={(e) => searchForPlayer(e)}
         >
           Buscar
         </button>
+        <div className="p-4 ">
+        
       </div>
-      <div className=" rounded-lg shadow-lg bg-white max-w-sm">
+      <button
+          type="button"
+          data-mdb-ripple="true"
+          data-mdb-ripple-color="light"
+          className=" md:mx-auto inline-block px-6 py-2.5  bg-blue-600 rounded text-white font-medium text-xs leading-tight uppercase  shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+          onClick={(e) => getRank(e)}
+        >
+          Actualizar
+        </button>
+      </div>
+      <div className="flex flex-row">
+      <div className=" rounded-lg shadow-lg bg-white max-w-sm ">
         {JSON.stringify(playerData) != "{}" ? (
           <>
             <img
               alt="akivatuimagendeperfil"
-              className="rounded-t-lg"
+              className="  md:mx-auto rounded-t-lg"
               src={
                 "http://ddragon.leagueoflegends.com/cdn/12.11.1/img/profileicon/" +
                 playerData.profileIconId +
@@ -106,45 +122,80 @@ export default function Home() {
               }
             />
             <div className="p-6">
-              <p className="text-gray-900 text-xl font-medium mb-2">
+              <p className="   text-gray-900 text-xl font-medium mb-2">
                 {playerData.name}
               </p>
-              <p className="text-gray-700 text-base mb-4">
+              <p className= " text-gray-700 text-base mb-4">
                 Nivel {playerData.summonerLevel}
               </p>
             </div>
           </>
         ) : (
-          <></>
+          <>
+           <img
+              alt="akivatuimagendeperfil"
+              className="  md:mx-auto rounded-t-lg"
+              src={
+                "https://opgg-static.akamaized.net/images/profile_icons/profileIcon29.jpg"
+              }
+            />
+            <div className="p-6">
+              <p className="   text-gray-900 text-xl font-medium mb-2">
+               Nombre
+              </p>
+              <p className= " text-gray-700 text-base mb-4">
+                Nivel 
+              </p>
+            </div>
+          </>
         )}
       </div>
-      <div className="p-4">
-        <button
-          type="button"
-          data-mdb-ripple="true"
-          data-mdb-ripple-color="light"
-          className="inline-block px-6 py-2.5  bg-blue-600 rounded text-white font-medium text-xs leading-tight uppercase  shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-          onClick={(e) => getRank(e)}
-        >
-          Actualizar
-        </button>
-      </div>
-      <div>
+     
+      <div className=" px-3.5 self-center">
         {JSON.stringify(div) != "{}" ? (
           <>
-            <div>
+            <div className=" rounded-lg shadow-lg bg-slate-50 w-full flex flex-row " >
+              <div className="p-6 ">
               <p>Tier {div[0].tier}</p>
+              <img className="w-20 h-20" src={"Emblem_"+div[0].tier+".png"}></img>
               <p>Rank {div[0].rank}</p>
               <p>
                 wins {div[0].wins} losses {div[0].losses}
               </p>
+              </div>
+              <div className="p-6 ">
+              <p>Tier {div[1].tier}</p>
+              <img className="w-20 h-20" src={"Emblem_"+div[1].tier+".png"}></img>
+              <p>Rank {div[1].rank}</p>
+              <p>
+                wins {div[1].wins} losses {div[1].losses}
+              </p>
+            </div>
             </div>
           </>
         ) : (
           <>
-            <p>Rank</p>
+           <div className=" rounded-lg shadow-lg bg-slate-50 w-full flex flex-row " >
+              <div className="p-6 ">
+              <p>Tier </p>
+              <img className="w-20 h-20" src={"https://eloboost24.eu/images/divisions/0.webp"}></img>
+              <p>Rank</p>
+              <p>
+                wins 0 losses 0
+              </p>
+              </div>
+              <div className="p-6 ">
+              <p>Tier </p>
+              <img className="w-20 h-20" src={"https://eloboost24.eu/images/divisions/0.webp"}></img>
+              <p>Rank </p>
+              <p>
+                wins 0 losses 0
+              </p>
+            </div>
+            </div>
           </>
         )}
+      </div>
       </div>
     </div>
   );
