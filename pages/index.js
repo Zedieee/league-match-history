@@ -9,7 +9,12 @@ export default function Home() {
   const [playerData, setPlayerData] = useState({});
   const [div, setDiv] = useState({});
   const [id, setId] = useState("");
-  const API_KEY = "RGAPI-08b98d6f-d8af-47b8-bb42-f46d6c01fb20";
+  const [puuid, setPuuid] = useState({});
+  const[matchId, setMatchId] = useState({});
+  const [match, setMatch] = useState({});
+  const API_KEY = "RGAPI-5d114965-ab63-466f-b4f3-e039ac14af3e";
+
+
 
   function searchForPlayer(event) {
     //hacer la llamada a la API
@@ -24,14 +29,16 @@ export default function Home() {
       .get(ApiCallString)
       .then(function (response) {
         //Entro
-        console.log(response);
+  
         setPlayerData(response.data);
         setId(response.data.id);
+        setPuuid(response.data.puuid)
       })
       .catch(function (error) {
         //Valio
         console.log(error);
       });
+      
   }
 
   function getRank(event) {
@@ -44,21 +51,58 @@ export default function Home() {
     axios
       .get(Rank)
       .then(function (response) {
-        console.log(response);
+       
         setDiv(response.data);
       })
       .catch(function (error) {
         console.log(error);
       });
-    
-  }
+      var MatchID ="https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/"+
+      puuid +
+      "/ids?start=0&count=2&api_key="+
+      API_KEY;
+  
+      axios
+      .get(MatchID)
+      .then(function (response) {
 
+        setMatchId(response.data);
+
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+
+      
+  }
+ function getHistory(event){
+  var n= 0;
+  for(var i=0;i<matchId.length;i++){
+    n+= i;
+    var Match =["https://americas.api.riotgames.com/lol/match/v5/matches/"+
+    matchId[n]+
+  "?api_key="+
+  API_KEY]; 
+  console.log(Match);
+  axios
+  .get(Match)
+  .then(function (response) {
+    console.log(response.data);
+    setMatch(response.data);
+
+  })
+  .catch(function (error) {
+    console.log(error);
+  });
+  }
+ 
+ }
   
  
 
 
   return (
-    <div className="h-screen flex-col  md:mx-auto items-center flex justify-center bg-blue-100 ">
+    <div className="md:flex md:flex-col h-screen flex-col  items-center flex justify-center bg-blue-100 ">
       <h1 className="font-medium text-center  md:mx-auto  leading-tight text-5xl mt-0 mb-2 text-blue-600">
         Buscador de jugadores
       </h1>
@@ -98,15 +142,27 @@ export default function Home() {
         <div className="p-4 ">
         
       </div>
+    
       <button
           type="button"
           data-mdb-ripple="true"
           data-mdb-ripple-color="light"
           className=" md:mx-auto inline-block px-6 py-2.5  bg-blue-600 rounded text-white font-medium text-xs leading-tight uppercase  shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-          onClick={(e) => getRank(e)}
+          onClick={(e) => getRank(e) }
         >
-          Actualizar
+          Actualizar 
         </button>
+        <div className="p-4">  </div>
+        <button
+          type="button"
+          data-mdb-ripple="true"
+          data-mdb-ripple-color="light"
+          className=" md:mx-auto inline-block px-6 py-2.5  bg-blue-600 rounded text-white font-medium text-xs leading-tight uppercase  shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+          onClick={(e) => getHistory(e) }
+        >
+          Actualizar historial
+        </button>
+      
       </div>
       <div className="flex flex-row">
       <div className=" rounded-lg shadow-lg bg-white max-w-sm ">
@@ -151,7 +207,7 @@ export default function Home() {
         )}
       </div>
      
-      <div className=" px-3.5 self-center">
+      <div className=" px-3.5 self-center ">
         {JSON.stringify(div) != "{}" ? (
           <>
             <div className=" rounded-lg shadow-lg bg-slate-50 w-full flex flex-row " >
@@ -171,6 +227,7 @@ export default function Home() {
                 wins {div[1].wins} losses {div[1].losses}
               </p>
             </div>
+
             </div>
           </>
         ) : (
@@ -196,7 +253,34 @@ export default function Home() {
           </>
         )}
       </div>
+      <div className=" px-3.5 ">
+        {JSON.stringify(match) != "{}" ? (
+          <>
+            <div className=" rounded-lg shadow-lg bg-slate-50 w-full flex flex-row   " >
+              <div className="p-6 ">
+             <p>
+            Modo {match.info.gameMode}
+        
+             </p>
+             <p>
+              Duracion {Math.floor((match.info.gameDuration / 60) % 60)+"m "+ match.info.gameDuration % 60 + "s"}
+             </p>
+            </div>
+
+            </div>
+          </>
+        ) : (
+          <>
+           <div className=" rounded-lg shadow-lg bg-slate-50 w-full flex flex-row " >
+              <div className="p-6 ">
+              
+            </div>
+            </div>
+          </>
+        )}
       </div>
+      </div>
+      
     </div>
   );
 }
