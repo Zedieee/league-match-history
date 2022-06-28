@@ -10,8 +10,8 @@ export default function Home() {
   const [div, setDiv] = useState({});
   const [id, setId] = useState("");
   const [puuid, setPuuid] = useState({});
-  const [matchId, setMatchId] = useState([]);
-  const [match, setMatch] = useState([]);
+  const [matchId, setMatchId] = useState({});
+  const [match, setMatch] = useState({});
   const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
   function searchForPlayer(event) {
@@ -76,7 +76,7 @@ export default function Home() {
      
       var Match =
         "https://americas.api.riotgames.com/lol/match/v5/matches/" +
-          matchId[n] +
+          matchId[19] +
           "?api_key=" +
           API_KEY;
 
@@ -290,7 +290,7 @@ export default function Home() {
                 </div>
                 <div className="p-3 bg-green-500 rounded-b-lg break-words text-white">
                 <p>
-                    Duracion{" "}
+                Duracion{" "}
                     {Math.floor((match.info.gameDuration / 60) % 60) +
                       "m " +
                       (match.info.gameDuration % 60) +
