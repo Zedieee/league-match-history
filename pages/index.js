@@ -10,11 +10,9 @@ export default function Home() {
   const [div, setDiv] = useState({});
   const [id, setId] = useState("");
   const [puuid, setPuuid] = useState({});
-  const[matchId, setMatchId] = useState({});
-  const [match, setMatch] = useState({});
-  const API_KEY = "RGAPI-5d114965-ab63-466f-b4f3-e039ac14af3e";
-
-
+  const [matchId, setMatchId] = useState([]);
+  const [match, setMatch] = useState([]);
+  const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
   function searchForPlayer(event) {
     //hacer la llamada a la API
@@ -29,16 +27,15 @@ export default function Home() {
       .get(ApiCallString)
       .then(function (response) {
         //Entro
-  
+
         setPlayerData(response.data);
         setId(response.data.id);
-        setPuuid(response.data.puuid)
+        setPuuid(response.data.puuid);
       })
       .catch(function (error) {
         //Valio
         console.log(error);
       });
-      
   }
 
   function getRank(event) {
@@ -51,55 +48,52 @@ export default function Home() {
     axios
       .get(Rank)
       .then(function (response) {
-       
         setDiv(response.data);
       })
       .catch(function (error) {
         console.log(error);
       });
-      var MatchID ="https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/"+
+    var MatchID =
+      "https://americas.api.riotgames.com/lol/match/v5/matches/by-puuid/" +
       puuid +
-      "/ids?start=0&count=2&api_key="+
+      "/ids?start=0&count=20&api_key=" +
       API_KEY;
-  
-      axios
+
+    axios
       .get(MatchID)
       .then(function (response) {
-
         setMatchId(response.data);
-
+      
       })
       .catch(function (error) {
         console.log(error);
       });
-
-      
+      console.log(matchId);
   }
- function getHistory(event){
-  var n= 0;
-  for(var i=0;i<matchId.length;i++){
-    n+= i;
-    var Match =["https://americas.api.riotgames.com/lol/match/v5/matches/"+
-    matchId[n]+
-  "?api_key="+
-  API_KEY]; 
-  console.log(Match);
-  axios
-  .get(Match)
-  .then(function (response) {
-    console.log(response.data);
-    setMatch(response.data);
-
-  })
-  .catch(function (error) {
-    console.log(error);
-  });
-  }
- 
- }
   
- 
+  function getHistory(event) {
+   
+     
+      var Match =
+        "https://americas.api.riotgames.com/lol/match/v5/matches/" +
+          matchId[n] +
+          "?api_key=" +
+          API_KEY;
 
+      axios
+        .get(Match)
+        .then(function (response) {
+     
+          setMatch(response.data);
+        })
+        .catch(function (error) {
+          console.log(error);
+        });
+        console.log(Match);
+    } 
+
+ 
+  
 
   return (
     <div className="md:flex md:flex-col h-screen flex-col  items-center flex justify-center bg-blue-100 ">
@@ -139,148 +133,219 @@ export default function Home() {
         >
           Buscar
         </button>
-        <div className="p-4 ">
-        
-      </div>
-    
-      <button
-          type="button"
-          data-mdb-ripple="true"
-          data-mdb-ripple-color="light"
-          className=" md:mx-auto inline-block px-6 py-2.5  bg-blue-600 rounded text-white font-medium text-xs leading-tight uppercase  shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-          onClick={(e) => getRank(e) }
-        >
-          Actualizar 
-        </button>
-        <div className="p-4">  </div>
+        <div className="p-4 "></div>
+
         <button
           type="button"
           data-mdb-ripple="true"
           data-mdb-ripple-color="light"
           className=" md:mx-auto inline-block px-6 py-2.5  bg-blue-600 rounded text-white font-medium text-xs leading-tight uppercase  shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
-          onClick={(e) => getHistory(e) }
+          onClick={(e) => getRank(e)}
+        >
+          Actualizar
+        </button>
+        <div className="p-4"> </div>
+        <button
+          type="button"
+          data-mdb-ripple="true"
+          data-mdb-ripple-color="light"
+          className=" md:mx-auto inline-block px-6 py-2.5  bg-blue-600 rounded text-white font-medium text-xs leading-tight uppercase  shadow-md hover:bg-blue-700 hover:shadow-lg focus:bg-blue-700 focus:shadow-lg focus:outline-none focus:ring-0 active:bg-blue-800 active:shadow-lg transition duration-150 ease-in-out"
+          onClick={(e) => getHistory(e)}
         >
           Actualizar historial
         </button>
-      
       </div>
       <div className="flex flex-row">
-      <div className=" rounded-lg shadow-lg bg-white max-w-sm ">
-        {JSON.stringify(playerData) != "{}" ? (
-          <>
-            <img
-              alt="akivatuimagendeperfil"
-              className="  md:mx-auto rounded-t-lg"
-              src={
-                "http://ddragon.leagueoflegends.com/cdn/12.11.1/img/profileicon/" +
-                playerData.profileIconId +
-                ".png"
-              }
-            />
-            <div className="p-6">
-              <p className="   text-gray-900 text-xl font-medium mb-2">
-                {playerData.name}
-              </p>
-              <p className= " text-gray-700 text-base mb-4">
-                Nivel {playerData.summonerLevel}
-              </p>
-            </div>
-          </>
-        ) : (
-          <>
-           <img
-              alt="akivatuimagendeperfil"
-              className="  md:mx-auto rounded-t-lg"
-              src={
-                "https://opgg-static.akamaized.net/images/profile_icons/profileIcon29.jpg"
-              }
-            />
-            <div className="p-6">
-              <p className="   text-gray-900 text-xl font-medium mb-2">
-               Nombre
-              </p>
-              <p className= " text-gray-700 text-base mb-4">
-                Nivel 
-              </p>
-            </div>
-          </>
-        )}
-      </div>
-     
-      <div className=" px-3.5 self-center ">
-        {JSON.stringify(div) != "{}" ? (
-          <>
-            <div className=" rounded-lg shadow-lg bg-slate-50 w-full flex flex-row " >
-              <div className="p-6 ">
-              <p>Tier {div[0].tier}</p>
-              <img className="w-20 h-20" src={"Emblem_"+div[0].tier+".png"}></img>
-              <p>Rank {div[0].rank}</p>
-              <p>
-                wins {div[0].wins} losses {div[0].losses}
-              </p>
+        <div className=" rounded-lg shadow-lg bg-white max-w-sm ">
+          {JSON.stringify(playerData) != "{}" ? (
+            <>
+              <img
+                alt="akivatuimagendeperfil"
+                className="  md:mx-auto rounded-t-lg"
+                src={
+                  "http://ddragon.leagueoflegends.com/cdn/12.11.1/img/profileicon/" +
+                  playerData.profileIconId +
+                  ".png"
+                }
+              />
+              <div className="p-6">
+                <p className="   text-gray-900 text-xl font-medium mb-2">
+                  {playerData.name}
+                </p>
+                <p className=" text-gray-700 text-base mb-4">
+                  Nivel {playerData.summonerLevel}
+                </p>
               </div>
-              <div className="p-6 ">
-              <p>Tier {div[1].tier}</p>
-              <img className="w-20 h-20" src={"Emblem_"+div[1].tier+".png"}></img>
-              <p>Rank {div[1].rank}</p>
-              <p>
-                wins {div[1].wins} losses {div[1].losses}
-              </p>
-            </div>
-
-            </div>
-          </>
-        ) : (
-          <>
-           <div className=" rounded-lg shadow-lg bg-slate-50 w-full flex flex-row " >
-              <div className="p-6 ">
-              <p>Tier </p>
-              <img className="w-20 h-20" src={"https://eloboost24.eu/images/divisions/0.webp"}></img>
-              <p>Rank</p>
-              <p>
-                wins 0 losses 0
-              </p>
+            </>
+          ) : (
+            <>
+              <img
+                alt="akivatuimagendeperfil"
+                className="  md:mx-auto rounded-t-lg"
+                src={
+                  "https://opgg-static.akamaized.net/images/profile_icons/profileIcon29.jpg"
+                }
+              />
+              <div className="p-6">
+                <p className="   text-gray-900 text-xl font-medium mb-2">
+                  Nombre
+                </p>
+                <p className=" text-gray-700 text-base mb-4">Nivel</p>
               </div>
-              <div className="p-6 ">
-              <p>Tier </p>
-              <img className="w-20 h-20" src={"https://eloboost24.eu/images/divisions/0.webp"}></img>
-              <p>Rank </p>
-              <p>
-                wins 0 losses 0
-              </p>
-            </div>
-            </div>
-          </>
-        )}
-      </div>
-      <div className=" px-3.5 ">
-        {JSON.stringify(match) != "{}" ? (
-          <>
-            <div className=" rounded-lg shadow-lg bg-slate-50 w-full flex flex-row   " >
-              <div className="p-6 ">
-             <p>
-            Modo {match.info.gameMode}
-        
-             </p>
-             <p>
-              Duracion {Math.floor((match.info.gameDuration / 60) % 60)+"m "+ match.info.gameDuration % 60 + "s"}
-             </p>
-            </div>
+            </>
+          )}
+        </div>
 
-            </div>
-          </>
-        ) : (
-          <>
-           <div className=" rounded-lg shadow-lg bg-slate-50 w-full flex flex-row " >
-              <div className="p-6 ">
-              
-            </div>
-            </div>
-          </>
-        )}
+        <div className=" px-3.5  ">
+          {JSON.stringify(div) != "{}" ? (
+            <>
+              <div className=" my-8 rounded-lg shadow-lg bg-slate-50 w-full flex flex-row ">
+                <div className="p-6 ">
+                  <p>Tier {div[0].tier}</p>
+                  <img
+                    className="w-20 h-20"
+                    src={"Emblem_" + div[0].tier + ".png"}
+                  ></img>
+                  <p>Rank {div[0].rank}</p>
+                  <p>
+                    wins {div[0].wins} losses {div[0].losses}
+                  </p>
+                </div>
+                <div className="p-6 ">
+                  <p>Tier {div[1].tier}</p>
+                  <img
+                    className="w-20 h-20"
+                    src={"Emblem_" + div[1].tier + ".png"}
+                  ></img>
+                  <p>Rank {div[1].rank}</p>
+                  <p>
+                    wins {div[1].wins} losses {div[1].losses}
+                  </p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="my-8 rounded-lg shadow-lg bg-slate-50 w-full flex flex-row ">
+                <div className="p-6 ">
+                  <p>Tier </p>
+                  <img
+                    className="w-20 h-20"
+                    src={"https://eloboost24.eu/images/divisions/0.webp"}
+                  ></img>
+                  <p>Rank</p>
+                  <p>wins 0 losses 0</p>
+                </div>
+                <div className="p-6 ">
+                  <p>Tier </p>
+                  <img
+                    className="w-20 h-20"
+                    src={"https://eloboost24.eu/images/divisions/0.webp"}
+                  ></img>
+                  <p>Rank </p>
+                  <p>wins 0 losses 0</p>
+                </div>
+              </div>
+            </>
+          )}
+       
+          {JSON.stringify(match) != "{}" ? (
+            <>
+              <div
+                className="bg-green-500 shadow-lg mx-auto w-96 max-w-full text-sm pointer-events-auto bg-clip-padding rounded-lg block mb-3"
+                id="static-example"
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true"
+                data-mdb-autohide="false"
+              >
+                <div className="bg-green-500 flex justify-between items-center py-2 px-3 bg-clip-padding border-b border-green-400 rounded-t-lg">
+                  <p className="font-bold text-white flex items-center">
+                    <svg
+                      aria-hidden="true"
+                      focusable="false"
+                      data-prefix="fas"
+                      data-icon="check-circle"
+                      className="w-4 h-4 mr-2 fill-current"
+                      role="img"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 512 512"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"
+                      ></path>
+                    </svg>
+                    Modo {match.info.gameMode}
+                  </p>
+                  <div className="flex items-center">
+                    <p className="text-white opacity-90 text-xs"></p>
+                    <button
+                      type="button"
+                      className="btn-close btn-close-white box-content w-4 h-4 ml-2 text-white border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-white hover:opacity-75 hover:no-underline"
+                      data-mdb-dismiss="toast"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                </div>
+                <div className="p-3 bg-green-500 rounded-b-lg break-words text-white">
+                <p>
+                    Duracion{" "}
+                    {Math.floor((match.info.gameDuration / 60) % 60) +
+                      "m " +
+                      (match.info.gameDuration % 60) +
+                      "s"}
+                  </p>
+                </div>
+              </div>
+            </>
+          ) : (
+            <>
+              <div
+                className="bg-green-500 shadow-lg mx-auto w-96 max-w-full text-sm pointer-events-auto bg-clip-padding rounded-lg block mb-3"
+                id="static-example"
+                role="alert"
+                aria-live="assertive"
+                aria-atomic="true"
+                data-mdb-autohide="false"
+              >
+                <div className="bg-green-500 flex justify-between items-center py-2 px-3 bg-clip-padding border-b border-green-400 rounded-t-lg">
+                  <p className="font-bold text-white flex items-center">
+                    <svg
+                      aria-hidden="true"
+                      focusable="false"
+                      data-prefix="fas"
+                      data-icon="check-circle"
+                      className="w-4 h-4 mr-2 fill-current"
+                      role="img"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 512 512"
+                    >
+                      <path
+                        fill="currentColor"
+                        d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"
+                      ></path>
+                    </svg>
+                    LastGame
+                  </p>
+                  <div className="flex items-center">
+                    <p className="text-white opacity-90 text-xs"></p>
+                    <button
+                      type="button"
+                      className="btn-close btn-close-white box-content w-4 h-4 ml-2 text-white border-none rounded-none opacity-50 focus:shadow-none focus:outline-none focus:opacity-100 hover:text-white hover:opacity-75 hover:no-underline"
+                      data-mdb-dismiss="toast"
+                      aria-label="Close"
+                    ></button>
+                  </div>
+                </div>
+                <div className="p-3 bg-green-500 rounded-b-lg break-words text-white">
+                  
+                </div>
+              </div>
+            </>
+          )}
+        </div>
       </div>
-      </div>
-      
     </div>
   );
 }
