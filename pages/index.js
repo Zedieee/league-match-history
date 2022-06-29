@@ -11,7 +11,8 @@ export default function Home() {
   const [id, setId] = useState("");
   const [puuid, setPuuid] = useState({});
   const [matchId, setMatchId] = useState({});
-  const [match, setMatch] = useState({});
+  const [match, setMatch] = useState([]);
+  var matches = new Array();
   const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
 
   function searchForPlayer(event) {
@@ -63,37 +64,33 @@ export default function Home() {
       .get(MatchID)
       .then(function (response) {
         setMatchId(response.data);
-      
-      })
+        
+      } )
       .catch(function (error) {
         console.log(error);
       });
-      console.log(matchId);
-  }
-  
-  function getHistory(event) {
    
-     
-      var Match =
-        "https://americas.api.riotgames.com/lol/match/v5/matches/" +
-          matchId[19] +
-          "?api_key=" +
-          API_KEY;
+  }
 
-      axios
-        .get(Match)
-        .then(function (response) {
-     
-          setMatch(response.data);
-        })
-        .catch(function (error) {
-          console.log(error);
+  function getHistory(event) {
+    matchId.length > 0
+      ? matchId.forEach((elemento) => {
+          axios
+            .get(
+              "https://americas.api.riotgames.com/lol/match/v5/matches/" +
+                elemento +
+                "?api_key=" +
+                API_KEY
+            )
+            .then((response) => matches.push(response.data), setMatch(matches)  )
+
+            //creo vas a tener que guardarlo en algun arreglo
+            .catch((error) => console.log(error));
+        }, console.log(match))
+      : setMatch({
+          error: "No hay información",
         });
-        console.log(Match);
-    } 
-
- 
-  
+  }
 
   return (
     <div className="md:flex md:flex-col h-screen flex-col  items-center flex justify-center bg-blue-100 ">
@@ -248,8 +245,8 @@ export default function Home() {
               </div>
             </>
           )}
-       
-          {JSON.stringify(match) != "{}" ? (
+
+          {JSON.stringify(match) != "[]" ? (
             <>
               <div
                 className="bg-green-500 shadow-lg mx-auto w-96 max-w-full text-sm pointer-events-auto bg-clip-padding rounded-lg block mb-3"
@@ -276,7 +273,7 @@ export default function Home() {
                         d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"
                       ></path>
                     </svg>
-                    Modo {match.info.gameMode}
+                    Modo {match[0].info.gameMode}
                   </p>
                   <div className="flex items-center">
                     <p className="text-white opacity-90 text-xs"></p>
@@ -289,11 +286,11 @@ export default function Home() {
                   </div>
                 </div>
                 <div className="p-3 bg-green-500 rounded-b-lg break-words text-white">
-                <p>
-                Duracion{" "}
-                    {Math.floor((match.info.gameDuration / 60) % 60) +
+                  <p>
+                  Duracion{" "}
+                    {Math.floor((match[0].info.gameDuration / 60) % 60) +
                       "m " +
-                      (match.info.gameDuration % 60) +
+                      (match[0].info.gameDuration % 60) +
                       "s"}
                   </p>
                 </div>
@@ -338,9 +335,7 @@ export default function Home() {
                     ></button>
                   </div>
                 </div>
-                <div className="p-3 bg-green-500 rounded-b-lg break-words text-white">
-                  
-                </div>
+                <div className="p-3 bg-green-500 rounded-b-lg break-words text-white"></div>
               </div>
             </>
           )}
