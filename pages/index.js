@@ -14,11 +14,24 @@ export default function Home() {
   const [match, setMatch] = useState([]);
   var matches = new Array();
   const API_KEY = process.env.NEXT_PUBLIC_API_KEY;
+var routing = "NA";
+switch (routing) {
+  case "NA":
+    routing="https://na1.api.riotgames.com"
+    break;
+case "LAN":
+  routing="la1.api.riotgames.com"
+  break;
 
+  
+
+  default:
+    break;
+}
   function searchForPlayer(event) {
     //hacer la llamada a la API
     var ApiCallString =
-      "https://na1.api.riotgames.com/lol/summoner/v4/summoners/by-name/" +
+      routing+"/lol/summoner/v4/summoners/by-name/" +
       searchText +
       "?api_key=" +
       API_KEY;
@@ -64,12 +77,10 @@ export default function Home() {
       .get(MatchID)
       .then(function (response) {
         setMatchId(response.data);
-        
-      } )
+      })
       .catch(function (error) {
         console.log(error);
       });
-   
   }
 
   function getHistory(event) {
@@ -82,22 +93,28 @@ export default function Home() {
                 "?api_key=" +
                 API_KEY
             )
-            .then((response) => matches.push(response.data), setMatch(matches)  )
+            .then((response) => {
+              matches.push(response.data);
+              setMatch(matches);
+            })
 
             //creo vas a tener que guardarlo en algun arreglo
             .catch((error) => console.log(error));
-        }, console.log(match))
+        })
       : setMatch({
           error: "No hay información",
         });
   }
 
   return (
+    
     <div className="md:flex md:flex-col h-screen flex-col  items-center flex justify-center bg-blue-100 ">
+      
       <h1 className="font-medium text-center  md:mx-auto  leading-tight text-5xl mt-0 mb-2 text-blue-600">
         Buscador de jugadores
       </h1>
       <div className=" py-6  md:mx-auto  flex flex-row">
+        <div className=" ">
         <input
           type="text"
           className="
@@ -121,6 +138,7 @@ export default function Home() {
           placeholder="Buscar jugador"
           onChange={(e) => setSearchText(e.target.value)}
         />
+         </div>
         <button
           type="button"
           data-mdb-ripple="true"
@@ -130,6 +148,7 @@ export default function Home() {
         >
           Buscar
         </button>
+      
         <div className="p-4 "></div>
 
         <button
@@ -156,6 +175,7 @@ export default function Home() {
         <div className=" rounded-lg shadow-lg bg-white max-w-sm ">
           {JSON.stringify(playerData) != "{}" ? (
             <>
+              <div className=" relative border-b-4 border-violet-500 ">
               <img
                 alt="akivatuimagendeperfil"
                 className="  md:mx-auto rounded-t-lg"
@@ -165,29 +185,37 @@ export default function Home() {
                   ".png"
                 }
               />
-              <div className="p-6">
-                <p className="   text-gray-900 text-xl font-medium mb-2">
+              <div className="flex space-x-2 justify-center">
+              <span className="absolute text-xs inline-block py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-slate-600 text-white   bottom-0 rounded-full  "> {playerData.summonerLevel} </span>
+              </div>
+              </div>
+              <div className="p-6 ">
+                <p className=" text-center font-Anek font-semibold  text-gray-900 text-xl  mb-2">
                   {playerData.name}
                 </p>
-                <p className=" text-gray-700 text-base mb-4">
-                  Nivel {playerData.summonerLevel}
-                </p>
+               
               </div>
             </>
           ) : (
             <>
-              <img
-                alt="akivatuimagendeperfil"
-                className="  md:mx-auto rounded-t-lg"
-                src={
-                  "https://opgg-static.akamaized.net/images/profile_icons/profileIcon29.jpg"
-                }
-              />
-              <div className="p-6">
-                <p className="   text-gray-900 text-xl font-medium mb-2">
+              <div className=" relative border-b-4 border-violet-500 ">
+                <img
+                  alt="akivatuimagendeperfil"
+                  className="  md:mx-auto rounded-t-lg"
+                  src={
+                    "https://opgg-static.akamaized.net/images/profile_icons/profileIcon29.jpg"
+                  }
+                />
+                 <div className="flex space-x-2 justify-center">
+              <span className="absolute text-xs inline-block py-1 px-2.5 leading-none text-center whitespace-nowrap align-baseline font-bold bg-slate-600 text-white   bottom-0 rounded-full  "> 0 </span>
+              </div>
+               </div>
+           
+              <div className="p-6 ">
+                <p className=" font-Anek  text-gray-900 text-xl font-medium mb-2">
                   Nombre
                 </p>
-                <p className=" text-gray-700 text-base mb-4">Nivel</p>
+                
               </div>
             </>
           )}
@@ -273,7 +301,7 @@ export default function Home() {
                         d="M504 256c0 136.967-111.033 248-248 248S8 392.967 8 256 119.033 8 256 8s248 111.033 248 248zM227.314 387.314l184-184c6.248-6.248 6.248-16.379 0-22.627l-22.627-22.627c-6.248-6.249-16.379-6.249-22.628 0L216 308.118l-70.059-70.059c-6.248-6.248-16.379-6.248-22.628 0l-22.627 22.627c-6.248 6.248-6.248 16.379 0 22.627l104 104c6.249 6.249 16.379 6.249 22.628.001z"
                       ></path>
                     </svg>
-                    Modo {match[0].info.gameMode}
+                    LastGame {match[0].info.gameMode}
                   </p>
                   <div className="flex items-center">
                     <p className="text-white opacity-90 text-xs"></p>
@@ -287,7 +315,7 @@ export default function Home() {
                 </div>
                 <div className="p-3 bg-green-500 rounded-b-lg break-words text-white">
                   <p>
-                  Duracion{" "}
+                    Duracion{" "}
                     {Math.floor((match[0].info.gameDuration / 60) % 60) +
                       "m " +
                       (match[0].info.gameDuration % 60) +
